@@ -5,7 +5,7 @@ services:
   #Mongo properties
   mongo:
     image: mongo
-    container_name: mongo_management
+    container_name: mongo_management2
 
     ports:
       - 27017:27017

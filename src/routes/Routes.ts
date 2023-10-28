@@ -1,4 +1,4 @@
-import {RequestQuery, ResponseToolkit} from "@hapi/hapi";
+import {Request, RequestQuery, ResponseToolkit} from "@hapi/hapi";
 import PurchaseController from "../controller/PurchaseController";
 
 class Routes {
@@ -10,7 +10,7 @@ class Routes {
             {
                 method: 'GET',
                 path: `/${rootPath}/`,
-                handler: async (request: RequestQuery, h: ResponseToolkit) => {
+                handler: async (request: Request, h: ResponseToolkit) => {
                     return this.purchaseController.getAllPurchases();
                 },
 
@@ -18,8 +18,8 @@ class Routes {
             {
                 method: 'POST',
                 path: `/${rootPath}/`,
-                handler: async (request: RequestQuery, h: ResponseToolkit) => {
-                    return this.purchaseController.createPurchases(request.params.code);
+                handler: async (request: Request, h: ResponseToolkit) => {
+                    return this.purchaseController.createPurchases(request.payload.toString());
                 },
             }
         ];
