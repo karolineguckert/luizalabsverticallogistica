@@ -14,66 +14,71 @@ class PurchaseBusiness {
     public async createPurchases (listOfPurchases: string[]){
         listOfPurchases.map(purchase => {
 
-            let obj = {
-                userID: "",
-                orderID: "",
-                productID: "",
+            let purchaseObject: any = { //TODO: interface ou dto ou classe
+                userId: "",
+                orderId: "",
+                productId: "",
                 userName: "",
-                value: 0.0,
+                value: "",
                 date: "",
-                completeObject: purchase
+                completePurchaseText: purchase
             }
 
-            let auxTextPurchase = purchase;
-            let purchaseUserID: string;
-            let purchaseOrderID: string;
-            let purchaseProductID: string;
-            let purchaseUserName: string;
+            const userIdExpMatch = this.getExpMatchID(purchaseObject.completePurchaseText);
+            purchaseObject = this.manipulatePurchaseObject("userId", purchaseObject, userIdExpMatch);
 
-            const userID = this.getID(auxTextPurchase);
-            if(userID){
-                const auxPurchaseLength = auxTextPurchase.length - 1;
-                purchaseUserID = userID[0];
-                auxTextPurchase = auxTextPurchase.slice(purchaseUserID.length, auxPurchaseLength);
-            }
+            const userNameExpMatch = this.getExpMatchUserName(purchaseObject.completePurchaseText);
+            purchaseObject = this.manipulatePurchaseObject("userName", purchaseObject, userNameExpMatch);
 
-            const userName = this.getUserName(auxTextPurchase);
-            if(userName){
-                const auxPurchaseLength = auxTextPurchase.length - 1;
-                purchaseUserName = userName[0];
-                auxTextPurchase = auxTextPurchase.slice(purchaseUserName.length, auxPurchaseLength)
-            }
+            const orderIdExpMatch = this.getExpMatchID(purchaseObject.completePurchaseText);
+            purchaseObject = this.manipulatePurchaseObject("orderId", purchaseObject, orderIdExpMatch);
 
-            const orderID = this.getID(auxTextPurchase);
-            if(orderID){
-                const auxPurchaseLength = auxTextPurchase.length - 1;
-                purchaseOrderID = orderID[0];
-                auxTextPurchase = auxTextPurchase.slice(purchaseOrderID.length, auxPurchaseLength);
-            }
+            const productIdExpMatch = this.getExpMatchID(purchaseObject.completePurchaseText);
+            purchaseObject = this.manipulatePurchaseObject("productId", purchaseObject, productIdExpMatch);
 
-            const productID = this.getID(auxTextPurchase);
-            if(productID){
-                const auxPurchaseLength = auxTextPurchase.length - 1;
-                purchaseProductID = productID[0];
-                auxTextPurchase = auxTextPurchase.slice(purchaseProductID.length, auxPurchaseLength);
-            }
-
-            console.log("aaaaaa",auxTextPurchase)
+            purchaseObject = this.setDate(purchaseObject);
+            purchaseObject = this.setValue(purchaseObject);
 
 
+            console.log("qqq", purchaseObject)
 
         })
         return "";
     }
 
-    private getID(auxTextPurchase: string){
+    private manipulatePurchaseObject(fieldName: string, purchaseObject: any, fieldExpMatch: RegExpMatchArray | null): any {
+        if(fieldExpMatch){
+            const lengthCompletePurchaseText = purchaseObject.completePurchaseText.length;
+            purchaseObject[fieldName] = fieldExpMatch[0];
+            purchaseObject.completePurchaseText = purchaseObject.completePurchaseText.slice(purchaseObject[fieldName].length, lengthCompletePurchaseText);
+        }
+        return purchaseObject;
+    }
+
+    private getExpMatchID(auxTextPurchase: string){
         const regexID = '([0-9]){10}';
         return auxTextPurchase.match(regexID);
     }
 
-    private getUserName(auxTextPurchase: string){
-        const regexUserName = '([A-Za-z]|[\\s]|[.]|[\']){45}';
+    private getExpMatchUserName(auxTextPurchase: string){
+        const regexUserName = '(\\s)+(([A-Za-z]|[\\s]|[.]|[\']){1,45})';
         return auxTextPurchase.match(regexUserName);
+    }
+
+    private setDate(purchaseObject: any){
+        const lengthCompletePurchaseText = purchaseObject.completePurchaseText.length;
+        const sizeOfDate = lengthCompletePurchaseText - 8;
+
+        purchaseObject.date = purchaseObject.completePurchaseText.slice(sizeOfDate, lengthCompletePurchaseText);
+        purchaseObject.completePurchaseText = purchaseObject.completePurchaseText.slice(0, sizeOfDate);
+
+        return purchaseObject;
+    }
+
+    private setValue(purchaseObject: any){
+        purchaseObject.value = purchaseObject.completePurchaseText;
+        purchaseObject.completePurchaseText = '';
+        return purchaseObject;
     }
 
 }
