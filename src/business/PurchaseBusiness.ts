@@ -12,7 +12,7 @@ class PurchaseBusiness {
     }
 
     public async createPurchases (listOfPurchases: string[]){
-        listOfPurchases.map(purchase => {
+        listOfPurchases.map(async purchase => {
 
             let purchaseObject: any = { //TODO: interface ou dto ou classe
                 userId: "",
@@ -40,8 +40,16 @@ class PurchaseBusiness {
             purchaseObject = this.setValue(purchaseObject);
 
 
-            console.log("qqq", purchaseObject)
-
+            if (this.isAllFieldsWithValue(purchaseObject)) {
+                await this.purchaseRepository.createPurchase(
+                    parseFloat(purchaseObject.userId),
+                    purchaseObject.userName,
+                    parseFloat(purchaseObject.orderId),
+                    parseFloat(purchaseObject.productId),
+                    parseFloat(purchaseObject.value.toString()),
+                    parseInt(purchaseObject.date)
+                );
+            }
         })
         return "";
     }
@@ -53,6 +61,14 @@ class PurchaseBusiness {
             purchaseObject.completePurchaseText = purchaseObject.completePurchaseText.slice(purchaseObject[fieldName].length, lengthCompletePurchaseText);
         }
         return purchaseObject;
+    }
+
+    private isAllFieldsWithValue(purchaseObject: any){
+        return purchaseObject.userId.length > 0 &&
+            purchaseObject.orderId.length > 0 &&
+            purchaseObject.productId.length > 0 &&
+            purchaseObject.userName.length > 0 &&
+            purchaseObject.date.length > 0;
     }
 
     private getExpMatchID(auxTextPurchase: string){

@@ -11,7 +11,7 @@ class PurchaseController {
 
   public async createPurchases(text: string){
       const listOfPurchases: string[] = text.split("\n");
-      console.log("aaaaaaaaa", listOfPurchases)
+      // console.log("aaaaaaaaa", listOfPurchases)
       const purchase = await this.purchaseBusiness.createPurchases(listOfPurchases);
       return JSON.stringify("purchase");
   }

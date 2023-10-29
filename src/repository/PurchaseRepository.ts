@@ -10,9 +10,21 @@ class PurchaseRepository {
         return Purchase.find().exec();
     }
 
-    public async createPurchase (name: string, image: string, code: number) {
+    public async createPurchase (userId: number,
+                                 userName: string,
+                                 orderId: number,
+                                 productId: number,
+                                 value: number,
+                                 date: number) {
 
-        return null;
+        return Purchase.create({
+            userId: userId,
+            userName: userName,
+            orderId: orderId,
+            productId: productId,
+            value: value,
+            date: date
+        });
     }
 
 }
