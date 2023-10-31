@@ -8,8 +8,6 @@ Esse projeto foi desenvolvido com objetivo de cumprir com o desafio proposto pel
 
 ### Dependências 
 - @hapi/hapi: ^21.3.2
-- amqplib: ^0.10.3
-- axios: ^1.5.1
 - dotenv: ^16.3.1
 - mongoose: ^7.6.3
 - ts-node: ^10.9.1
