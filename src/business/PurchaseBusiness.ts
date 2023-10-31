@@ -48,7 +48,7 @@ class PurchaseBusiness {
 
         listOfPurchasesText.map(async purchaseText => {
 
-            let purchaseObject: any = {
+            let initialPurchase: any = {
                 userId: "",
                 orderId: "",
                 productId: "",
@@ -58,30 +58,30 @@ class PurchaseBusiness {
                 completePurchaseText: purchaseText
             }
 
-            const userIdExpMatch = this.getExpMatchID(purchaseObject.completePurchaseText);
-            purchaseObject = this.manipulatePurchaseObject("userId", purchaseObject, userIdExpMatch);
+            const userIdExpMatch = this.getExpMatchID(initialPurchase.completePurchaseText);
+            initialPurchase = this.manipulatePurchaseObject("userId", initialPurchase, userIdExpMatch);
 
-            const userNameExpMatch = this.getExpMatchUserName(purchaseObject.completePurchaseText);
-            purchaseObject = this.manipulatePurchaseObject("userName", purchaseObject, userNameExpMatch);
+            const userNameExpMatch = this.getExpMatchUserName(initialPurchase.completePurchaseText);
+            initialPurchase = this.manipulatePurchaseObject("userName", initialPurchase, userNameExpMatch);
 
-            const orderIdExpMatch = this.getExpMatchID(purchaseObject.completePurchaseText);
-            purchaseObject = this.manipulatePurchaseObject("orderId", purchaseObject, orderIdExpMatch);
+            const orderIdExpMatch = this.getExpMatchID(initialPurchase.completePurchaseText);
+            initialPurchase = this.manipulatePurchaseObject("orderId", initialPurchase, orderIdExpMatch);
 
-            const productIdExpMatch = this.getExpMatchID(purchaseObject.completePurchaseText);
-            purchaseObject = this.manipulatePurchaseObject("productId", purchaseObject, productIdExpMatch);
+            const productIdExpMatch = this.getExpMatchID(initialPurchase.completePurchaseText);
+            initialPurchase = this.manipulatePurchaseObject("productId", initialPurchase, productIdExpMatch);
 
-            purchaseObject = this.setDate(purchaseObject);
-            purchaseObject = this.setValue(purchaseObject);
+            initialPurchase = this.setDate(initialPurchase);
+            initialPurchase = this.setValue(initialPurchase);
 
 
-            if (this.isAllFieldsWithValue(purchaseObject)) {
+            if (this.isAllFieldsWithValue(initialPurchase)) {
                 await this.purchaseRepository.createPurchase(
-                    parseFloat(purchaseObject.userId),
-                    purchaseObject.userName,
-                    parseFloat(purchaseObject.orderId),
-                    parseFloat(purchaseObject.productId),
-                    parseFloat(purchaseObject.value.toString()),
-                    parseInt(purchaseObject.date)
+                    parseFloat(initialPurchase.userId),
+                    initialPurchase.userName,
+                    parseFloat(initialPurchase.orderId),
+                    parseFloat(initialPurchase.productId),
+                    parseFloat(initialPurchase.value.toString()),
+                    parseInt(initialPurchase.date)
                 );
             }
         })
@@ -106,27 +106,27 @@ class PurchaseBusiness {
 
     private createFirstPurchase(purchases : PurchaseEntity[]): Purchase {
         const firstPurchase: PurchaseEntity = purchases[0];
-        const purchaseObject: Purchase = new Purchase(firstPurchase.userId, firstPurchase.userName);
-        purchaseObject.addOrder(firstPurchase.orderId, firstPurchase.date);
+        const initialPurchase: Purchase = new Purchase(firstPurchase.userId, firstPurchase.userName);
+        initialPurchase.addOrder(firstPurchase.orderId, firstPurchase.date);
 
-        return purchaseObject;
+        return initialPurchase;
     }
 
-    private manipulatePurchaseObject(fieldName: string, purchaseObject: any, fieldExpMatch: RegExpMatchArray | null): any {
+    private manipulatePurchaseObject(fieldName: string, initialPurchase: any, fieldExpMatch: RegExpMatchArray | null): any {
         if(fieldExpMatch){
-            const lengthCompletePurchaseText = purchaseObject.completePurchaseText.length;
-            purchaseObject[fieldName] = fieldExpMatch[0];
-            purchaseObject.completePurchaseText = purchaseObject.completePurchaseText.slice(purchaseObject[fieldName].length, lengthCompletePurchaseText);
+            const lengthCompletePurchaseText = initialPurchase.completePurchaseText.length;
+            initialPurchase[fieldName] = fieldExpMatch[0];
+            initialPurchase.completePurchaseText = initialPurchase.completePurchaseText.slice(initialPurchase[fieldName].length, lengthCompletePurchaseText);
         }
-        return purchaseObject;
+        return initialPurchase;
     }
 
-    private isAllFieldsWithValue(purchaseObject: any){
-        return purchaseObject.userId.length > 0 &&
-            purchaseObject.orderId.length > 0 &&
-            purchaseObject.productId.length > 0 &&
-            purchaseObject.userName.length > 0 &&
-            purchaseObject.date.length > 0;
+    private isAllFieldsWithValue(initialPurchase: any){
+        return initialPurchase.userId.length > 0 &&
+            initialPurchase.orderId.length > 0 &&
+            initialPurchase.productId.length > 0 &&
+            initialPurchase.userName.length > 0 &&
+            initialPurchase.date.length > 0;
     }
 
     private getCurrentPurchaseFromList(purchasesListObject: Purchases, purchaseFromEntity: PurchaseEntity): Purchase {
@@ -157,20 +157,20 @@ class PurchaseBusiness {
         return auxTextPurchase.match(regexUserName);
     }
 
-    private setDate(purchaseObject: any){
-        const lengthCompletePurchaseText = purchaseObject.completePurchaseText.length;
+    private setDate(initialPurchase: any){
+        const lengthCompletePurchaseText = initialPurchase.completePurchaseText.length;
         const sizeOfDate = lengthCompletePurchaseText - 8;
 
-        purchaseObject.date = purchaseObject.completePurchaseText.slice(sizeOfDate, lengthCompletePurchaseText);
-        purchaseObject.completePurchaseText = purchaseObject.completePurchaseText.slice(0, sizeOfDate);
+        initialPurchase.date = initialPurchase.completePurchaseText.slice(sizeOfDate, lengthCompletePurchaseText);
+        initialPurchase.completePurchaseText = initialPurchase.completePurchaseText.slice(0, sizeOfDate);
 
-        return purchaseObject;
+        return initialPurchase;
     }
 
-    private setValue(purchaseObject: any){
-        purchaseObject.value = purchaseObject.completePurchaseText;
-        purchaseObject.completePurchaseText = '';
-        return purchaseObject;
+    private setValue(initialPurchase: any){
+        initialPurchase.value = initialPurchase.completePurchaseText;
+        initialPurchase.completePurchaseText = '';
+        return initialPurchase;
     }
 
 }
