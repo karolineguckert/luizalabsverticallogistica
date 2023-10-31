@@ -1,10 +1,12 @@
 # Projeto para vertical da logística
 Esse projeto foi desenvolvido com objetivo de cumprir com o desafio proposto pelo time da vertical de logística.
+
+### Tecnologias
 - node
 - mongoDB
 - Typescript
 
-### Dependencies
+### Dependências 
 - @hapi/hapi: ^21.3.2
 - amqplib: ^0.10.3
 - axios: ^1.5.1
@@ -13,7 +15,7 @@ Esse projeto foi desenvolvido com objetivo de cumprir com o desafio proposto pel
 - ts-node: ^10.9.1
 - typescript: ^5.2.2
 
-### Instalation
+### Instalação 
 - **1.** npm install
 - **2.** npm run server
 
