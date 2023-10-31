@@ -1,5 +1,4 @@
 import Product from "./Product";
-import product from "./Product";
 
 class Order {
     private order_id: number;
@@ -7,17 +6,25 @@ class Order {
     private date: string;
     private products: Product[];
 
-    constructor(order_id: number, total: number, date: string) {
+    constructor(order_id: number, date: string) {
         this.order_id = order_id;
-        this.total = total;
+        this.total = 0;
         this.date = date;
         this.products = [];
     }
 
     public addProduct(product_id: number, value: number){
-        //TODO: Colocar o calcUlo do total
         const product: Product = new Product(product_id, value);
         this.products.push(product);
+        this.sumTotal(value);
+    }
+
+    public getOrderId(): number{
+        return this.order_id;
+    }
+
+    public sumTotal(value: number){
+        this.total = this.total + value;
     }
 }
 export default Order;

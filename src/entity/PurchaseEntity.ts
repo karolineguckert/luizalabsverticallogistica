@@ -1,15 +1,15 @@
 import {model, Schema} from 'mongoose';
 
-interface Purchase {
-    userId: Number;
-    userName: String;
-    orderId: Number;
-    productId: Number;
-    value:  Number,
-    date: Number;
+interface PurchaseEntity {
+    userId: number;
+    userName: string;
+    orderId: number;
+    productId: number;
+    value:  number,
+    date: number;
 }
 
-const purchaseSchema = new Schema<Purchase>({
+const purchaseEntitySchema = new Schema<PurchaseEntity>({
     userId: { type: Number, required: true, size: 10 },
     userName: { type: String, required: true, size: 45 },
     orderId: { type: Number, required: true, size: 10 },
@@ -18,5 +18,5 @@ const purchaseSchema = new Schema<Purchase>({
     date: { type: Number, required: true, size: 8 }
 });
 
-const Purchase = model('purchase', purchaseSchema);
-export default Purchase;
+const PurchaseEntity = model('purchase', purchaseEntitySchema);
+export default PurchaseEntity;
