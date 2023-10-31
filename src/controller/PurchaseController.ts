@@ -8,6 +8,11 @@ class PurchaseController {
       return JSON.parse(JSON.stringify(purchase));
   }
 
+    public async getPurchaseByDate(beginDate: number, endDate: number){
+        const purchases = await this.purchaseBusiness.getPurchaseByDate(beginDate, endDate);
+        return JSON.parse(JSON.stringify(purchases));
+    }
+
   public async getAllPurchases(){
       const purchases = await this.purchaseBusiness.getAllPurchases();
       return JSON.parse(JSON.stringify(purchases));

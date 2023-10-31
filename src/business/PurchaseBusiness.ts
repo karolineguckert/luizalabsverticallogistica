@@ -1,7 +1,8 @@
 import PurchaseRepository from "../repository/PurchaseRepository";
 import PurchaseEntity from "../entity/PurchaseEntity";
-import Purchase from "../Purchase";
-import Purchases from "../Purchases";
+import Purchase from "../dto/Purchase";
+import Purchases from "../dto/Purchases";
+import Order from "../dto/Order";
 
 class PurchaseBusiness {
     private purchaseRepository: PurchaseRepository;
@@ -12,39 +13,22 @@ class PurchaseBusiness {
 
     public async getAllPurchases (){
         const purchasesFromEntity : PurchaseEntity[] = await this.purchaseRepository.getAllPurchases();
+        return this.createPurchaseObject(purchasesFromEntity);
+    }
 
-        if(purchasesFromEntity.length > 0){
-            let purchaseObject: Purchases = new Purchases(this.createFirstPurchase(purchasesFromEntity));
-
-            purchasesFromEntity.map(purchaseFromEntity => {
-                let purchase = purchaseObject.getPurchase(purchaseFromEntity.userId);
-
-                if(purchase === undefined){
-                    purchase = purchaseObject.addPurchase(purchaseFromEntity.userId, purchaseFromEntity.userName);
-                }
-
-                let order = purchase.getOrder(purchaseFromEntity.orderId);
-
-                if(order === undefined){
-                    order = purchase.addOrder(purchaseFromEntity.orderId, purchaseFromEntity.date);
-                }
-
-                order.addProduct(purchaseFromEntity.productId, purchaseFromEntity.value);
-
-            })
-            return purchaseObject;
-        }
-        return {};
+    public async getPurchaseByDate (beginDate: number, endDate: number){
+        const purchasesFromEntity : PurchaseEntity[] = await this.purchaseRepository.getPurchaseByDate(beginDate, endDate);
+        return this.createPurchaseObject(purchasesFromEntity);
     }
 
     public async getPurchaseByOrderId (orderId: number){
         const purchasesFromEntity : PurchaseEntity[] = await this.purchaseRepository.getPurchaseByOrderId(orderId);
 
         if(purchasesFromEntity.length > 0){
-            let purchaseObject: Purchases = new Purchases(this.createFirstPurchase(purchasesFromEntity));
+            let purchasesListObject: Purchases = new Purchases(this.createFirstPurchase(purchasesFromEntity));
 
             purchasesFromEntity.map(purchaseFromEntity => {
-                let purchase = purchaseObject.getPurchase(purchaseFromEntity.userId);
+                let purchase = purchasesListObject.getPurchase(purchaseFromEntity.userId);
 
                 if(purchase !== undefined){
                     let order = purchase.getOrder(purchaseFromEntity.orderId);
@@ -54,24 +38,24 @@ class PurchaseBusiness {
                     }
                 }
             })
-            return purchaseObject;
+            return purchasesListObject;
         }
         return {};
     }
 
     public async createPurchases (text: string){
-        const listOfPurchases: string[] = text.split("\n")
+        const listOfPurchasesText: string[] = text.split("\n")
 
-        listOfPurchases.map(async purchase => {
+        listOfPurchasesText.map(async purchaseText => {
 
-            let purchaseObject: any = { //TODO: interface ou dto ou classe
+            let purchaseObject: any = {
                 userId: "",
                 orderId: "",
                 productId: "",
                 userName: "",
                 value: "",
                 date: "",
-                completePurchaseText: purchase
+                completePurchaseText: purchaseText
             }
 
             const userIdExpMatch = this.getExpMatchID(purchaseObject.completePurchaseText);
@@ -104,6 +88,22 @@ class PurchaseBusiness {
         return "";
     }
 
+    private createPurchaseObject(purchasesFromEntity : PurchaseEntity[]){
+        if(purchasesFromEntity.length > 0){
+            let purchasesListObject: Purchases = new Purchases(this.createFirstPurchase(purchasesFromEntity));
+
+            purchasesFromEntity.map(purchaseFromEntity => {
+                let purchase = this.getCurrentPurchaseFromList(purchasesListObject, purchaseFromEntity);
+                let order = this.getCurrentOrderFromPurchase(purchase, purchaseFromEntity);
+
+                order.addProduct(purchaseFromEntity.productId, purchaseFromEntity.value);
+
+            })
+            return purchasesListObject;
+        }
+        return {};
+    }
+
     private createFirstPurchase(purchases : PurchaseEntity[]): Purchase {
         const firstPurchase: PurchaseEntity = purchases[0];
         const purchaseObject: Purchase = new Purchase(firstPurchase.userId, firstPurchase.userName);
@@ -129,6 +129,23 @@ class PurchaseBusiness {
             purchaseObject.date.length > 0;
     }
 
+    private getCurrentPurchaseFromList(purchasesListObject: Purchases, purchaseFromEntity: PurchaseEntity): Purchase {
+        let purchase = purchasesListObject.getPurchase(purchaseFromEntity.userId);
+
+        if(purchase === undefined){
+            purchase = purchasesListObject.addPurchase(purchaseFromEntity.userId, purchaseFromEntity.userName);
+        }
+        return purchase;
+    }
+
+    private getCurrentOrderFromPurchase(purchase: Purchase, purchaseFromEntity: PurchaseEntity): Order {
+        let order = purchase.getOrder(purchaseFromEntity.orderId);
+
+        if(order === undefined){
+            order = purchase.addOrder(purchaseFromEntity.orderId, purchaseFromEntity.date);
+        }
+        return order;
+    }
 
     private getExpMatchID(auxTextPurchase: string){
         const regexID = '([0-9]){10}';

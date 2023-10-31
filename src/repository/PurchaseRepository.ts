@@ -6,6 +6,10 @@ class PurchaseRepository {
         return PurchaseEntity.find({orderId: orderId}).exec();
     }
 
+    public async getPurchaseByDate (beginDate: number, endDate: number) {
+        return PurchaseEntity.find({date: {$gte: beginDate, $lte: endDate}}).exec();
+    }
+
     public async getAllPurchases () {
         return PurchaseEntity.find().exec();
     }
