@@ -9,11 +9,17 @@ class Routes {
         return [
             {
                 method: 'GET',
-                path: `/${rootPath}/`,
+                path: `/${rootPath}/orders/`,
                 handler: async (request: Request, h: ResponseToolkit) => {
                     return this.purchaseController.getAllPurchases();
                 },
-
+            },
+            {
+                method: 'GET',
+                path: `/${rootPath}/orders/{orderId}`,
+                handler: async (request: Request, h: ResponseToolkit) => {
+                    return this.purchaseController.getPurchaseByOrderId(request.params.orderId);
+                },
             },
             {
                 method: 'POST',

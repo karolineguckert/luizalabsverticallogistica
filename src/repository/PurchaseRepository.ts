@@ -1,13 +1,13 @@
-import Purchase from "../entity/Purchase";
+import PurchaseEntity from "../entity/PurchaseEntity";
 
 class PurchaseRepository {
 
-    public async getPurchase (code: number) {
-        return Purchase.find({code: code}).exec();
+    public async getPurchaseByOrderId (orderId: number) {
+        return PurchaseEntity.find({orderId: orderId}).exec();
     }
 
     public async getAllPurchases () {
-        return Purchase.find().exec();
+        return PurchaseEntity.find().exec();
     }
 
     public async createPurchase (userId: number,
@@ -17,7 +17,7 @@ class PurchaseRepository {
                                  value: number,
                                  date: number) {
 
-        return Purchase.create({
+        return PurchaseEntity.create({
             userId: userId,
             userName: userName,
             orderId: orderId,
